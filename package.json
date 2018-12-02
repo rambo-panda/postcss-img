@@ -1,0 +1,48 @@
+{
+  "name": "postcss-img",
+  "version": "0.1.0",
+  "description": "PostCSS plugin Convert to Base64 for redundancy limit size, otherwise use prepared webp pictures to replace",
+  "keywords": [
+    "postcss",
+    "css",
+    "postcss-plugin",
+    "webp"
+  ],
+  "author": "rambo <rambojoin@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rambo-panda/postcss-img.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rambo-panda/postcss-img/issues"
+  },
+  "homepage": "https://github.com/rambo-panda/postcss-img",
+  "dependencies": {
+    "postcss": "^6.0.16"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2",
+    "eslint-config-postcss": "^2.0.2",
+    "jest": "^22.4.2"
+  },
+  "scripts": {
+    "test": "jest && eslint *.js"
+  },
+  "eslintConfig": {
+    "extends": "eslint-config-postcss/es5",
+    "rules": {
+      "quotes": 0
+    },
+    "env": {
+      "jest": true
+    }
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  }
+}
