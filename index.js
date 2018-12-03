@@ -45,6 +45,13 @@ module.exports = postcss.plugin(
                 return;
             }
 
+            const { parent } = decl;
+
+            // Not all decl have the parent eg: newly added `the .webp` rule
+            if (!parent) {
+                return;
+            }
+
             const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
 
             if ($base64Limit > 0) {
@@ -66,19 +73,14 @@ module.exports = postcss.plugin(
             }
 
             if (webpClassName !== '') {
-                const { parent } = decl;
-
-                // Not all decl have the parent eg: parceljs generated ast
-                if (parent) {
-                    parent.cloneAfter({
-                        selector: `.${newOpts.webpClassName} ${parent.selector}`,
-                        nodes: [
-                            decl.clone({
-                                value: decl.value.replace(url, `${url}.webp`)
-                            })
-                        ]
-                    });
-                }
+                parent.cloneAfter({
+                    selector: `.${newOpts.webpClassName} ${parent.selector}`,
+                    nodes: [
+                        decl.clone({
+                            value: decl.value.replace(url, `${url}.webp`)
+                        })
+                    ]
+                });
             }
         });
     }
