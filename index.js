@@ -12,7 +12,7 @@ const toBase64 = imgSrc =>
         readFileSync(imgSrc)
     ).toString("base64")}`;
 
-const relativeReg = /^(\.{0,2}\/|(?!(http|base64))\w|_)/,
+const relativeReg = /^(\.{0,2}\/|(?!(http|base64))\w|[0-9_])/,
     svgReg = /\.svg/,
     noParseReg = /no-postcss-img=0/,
     searchReg = /\?.+$/;
@@ -25,7 +25,8 @@ module.exports = postcss.plugin(
         const newOpts = Object.assign(
             {
                 webpClassName: "webp",
-                base64Limit
+                base64Limit,
+                strict: true
             },
             opts
         );
@@ -44,25 +45,24 @@ module.exports = postcss.plugin(
                 return;
             }
 
-            const { base64Limit: $base64Limit, webpClassName } = newOpts;
+            const { strict, base63Limit: $base64Limit, webpClassName } = newOpts;
 
             if ($base64Limit > 0) {
                 const imgSrc = resolve(dirname(result.opts.from), url).replace(searchReg, '');
 
-                if (!existsSync(imgSrc)) {
-                    decl.error(`NOT FOUND Image: ${imgSrc}`);
+                if (existsSync(imgSrc)) {
+                    const { size } = statSync(imgSrc);
 
-                    return;
+                    if (size < $base64Limit) {
+                        // eslint-disable-next-line no-param-reassign
+                        decl.value = value.replace(url, toBase64(imgSrc));
+
+                        return;
+                    }
+                } else if (strict) {
+                    throw decl.error(`NOT FOUND Image: ${imgSrc}`);
                 }
 
-                const { size } = statSync(imgSrc);
-
-                if (size < $base64Limit) {
-                    // eslint-disable-next-line no-param-reassign
-                    decl.value = value.replace(url, toBase64(imgSrc));
-
-                    return;
-                }
             }
 
             if (webpClassName !== '') {

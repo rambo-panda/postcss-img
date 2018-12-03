@@ -68,6 +68,18 @@ describe('test regexp', () => {
 
         return run(test, success, {});
     });
+
+    it('background startsWith Number', () => {
+        const { test, success } = buildParams('', '');
+
+        return run(test.replace('cc9966.png', '1.png'), success, {});
+    });
+
+    it('background with _', () => {
+        const { test, success } = buildParams('', '');
+
+        return run(test.replace('cc9966.png', '_.png'), success, {});
+    });
 });
 
 describe('test to base64', () => {
