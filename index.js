@@ -12,7 +12,7 @@ const toBase64 = imgSrc =>
         readFileSync(imgSrc)
     ).toString("base64")}`;
 
-const relativeReg = /^(\.{0,2}\/|(?!(http|base64))\w|[0-9_])/,
+const relativeReg = /^(\.{0,2}\/|(?!(http|data:image))\w|[0-9_])/,
     svgReg = /\.svg/,
     noParseReg = /no-postcss-img=0/,
     searchReg = /\?.+$/;
@@ -45,7 +45,7 @@ module.exports = postcss.plugin(
                 return;
             }
 
-            const { strict, base63Limit: $base64Limit, webpClassName } = newOpts;
+            const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
 
             if ($base64Limit > 0) {
                 const imgSrc = resolve(dirname(result.opts.from), url).replace(searchReg, '');
