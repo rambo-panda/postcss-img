@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 const postcss = require("postcss");
 
 const urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
@@ -9,6 +11,11 @@ const toBase64 = imgSrc =>
     `data:image/${extname(imgSrc).slice(1)};base64,${Buffer.from(
         readFileSync(imgSrc)
     ).toString("base64")}`;
+
+const relativeReg = /^(\.{0,2}\/|(?!(http|base64))\w|_)/,
+    svgReg = /\.svg/,
+    noParseReg = /no-postcss-img=0/,
+    searchReg = /\?.+$/;
 
 module.exports = postcss.plugin(
     "postcss-img",
@@ -31,10 +38,22 @@ module.exports = postcss.plugin(
                 return;
             }
 
+            if (noParseReg.test(url)) {
+                return;
+            }
+
+            if (!relativeReg.test(url)) {
+                return;
+            }
+
+            if (svgReg.test(url)) {
+                return;
+            }
+
             const { base64Limit: $base64Limit, webpClassName } = newOpts;
 
             if ($base64Limit > 0) {
-                const imgSrc = resolve(dirname(result.opts.from), url);
+                const imgSrc = resolve(dirname(result.opts.from), url).replace(searchReg, '');
 
                 if (!existsSync(imgSrc)) {
                     decl.error(`NOT FOUND Image: ${imgSrc}`);

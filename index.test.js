@@ -27,6 +27,36 @@ describe('test regexp', () => {
         return run(test, test, { });
     });
 
+    it('background url is startsWith http', () => {
+        const x = 'a{background:url("https://www.xxx.com/xxx/yyy.png")}';
+
+        return run(x, x, {});
+    });
+
+    it('background url is startsWith svg', () => {
+        const x = 'a{background:url("./a.svg")}';
+
+        return run(x, x, {});
+    });
+
+    it('background url disable', () => {
+        const x = 'a{background:url(./test/cc9966.png?no-postcss-img=0)}';
+
+        return run(x, x, {});
+    });
+
+    it('background url is startsWith base64', () => {
+        const { success } = buildParams('');
+
+        return run(success, success, {});
+    });
+
+    it('background-image', () => {
+        const { test, success } = buildParams('');
+
+        return run(test, success, {});
+    });
+
     it('background-image', () => {
         const { test, success } = buildParams('');
 
@@ -45,6 +75,12 @@ describe('test to base64', () => {
         const { test, success } = buildParams('');
 
         return run(test, success, {});
+    });
+
+    it("base64 add search url", () => {
+        const { test, success } = buildParams("'");
+
+        return run(test.replace('cc9966.png', 'cc9966.png?version=1'), success, {});
     });
 
     it("base64 '", () => {
