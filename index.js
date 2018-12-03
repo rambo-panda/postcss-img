@@ -17,6 +17,8 @@ const relativeReg = /^(\.{0,2}\/|(?!(http|base64))\w|_)/,
     noParseReg = /no-postcss-img=0/,
     searchReg = /\?.+$/;
 
+const noParse = (url) => noParseReg.test(url) || !relativeReg.test(url) || svgReg.test(url);
+
 module.exports = postcss.plugin(
     "postcss-img",
     (opts = {}) => (root, result) => {
@@ -38,15 +40,7 @@ module.exports = postcss.plugin(
                 return;
             }
 
-            if (noParseReg.test(url)) {
-                return;
-            }
-
-            if (!relativeReg.test(url)) {
-                return;
-            }
-
-            if (svgReg.test(url)) {
+            if (noParse(url)) {
                 return;
             }
 
