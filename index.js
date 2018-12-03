@@ -68,14 +68,17 @@ module.exports = postcss.plugin(
             if (webpClassName !== '') {
                 const { parent } = decl;
 
-                parent.cloneAfter({
-                    selector: `.${newOpts.webpClassName} ${parent.selector}`,
-                    nodes: [
-                        decl.clone({
-                            value: decl.value.replace(url, `${url}.webp`)
-                        })
-                    ]
-                });
+                // Not all decl have the parent eg: parceljs generated ast
+                if (parent) {
+                    parent.cloneAfter({
+                        selector: `.${newOpts.webpClassName} ${parent.selector}`,
+                        nodes: [
+                            decl.clone({
+                                value: decl.value.replace(url, `${url}.webp`)
+                            })
+                        ]
+                    });
+                }
             }
         });
     }
