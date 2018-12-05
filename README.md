@@ -30,9 +30,10 @@
 
 ```js
 postcss([ require('postcss-webp')({
-   webpClassName: 'webp',  // default webp
-   base64Limit: 1024 * 3,  // default 3K
-}) ])
+   webpClassName: 'webp',  // default webp  TODO trasnform webp will be disabled When webpClassName is empty string
+   base64Limit: 1024 * 3,  // default 3K    TODO transform base64 will be disabled When base64Limit is zero
+   strict: true,           // true          Directly throwing an abort program to continue execution
+}) ]);
 ```
 
 See [PostCSS] docs for examples for your environment.
