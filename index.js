@@ -15,7 +15,9 @@ const toBase64 = imgSrc =>
 const relativeReg = /^(\.{0,2}\/|(?!(http|data:image))\w|[0-9_])/,
     svgReg = /\.svg/,
     noParseReg = /no-postcss-img=0/,
-    searchReg = /\?.+$/;
+    searchReg = /\?.+$/,
+    webpReg = /\.webp(\?.+)?$/,
+    endReg = /(\?.+)?$/;
 
 const noParse = (url) => noParseReg.test(url) || !relativeReg.test(url) || svgReg.test(url);
 
@@ -47,11 +49,6 @@ module.exports = postcss.plugin(
 
             const { parent } = decl;
 
-            // Not all decl have the parent eg: newly added `the .webp` rule
-            if (!parent) {
-                return;
-            }
-
             const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
 
             if ($base64Limit > 0) {
@@ -69,18 +66,21 @@ module.exports = postcss.plugin(
                 } else if (strict) {
                     throw decl.error(`NOT FOUND Image: ${imgSrc}`);
                 }
-
             }
 
-            if (webpClassName !== '') {
-                parent.cloneAfter({
-                    selector: `.${newOpts.webpClassName} ${parent.selector}`,
-                    nodes: [
-                        decl.clone({
-                            value: decl.value.replace(url, `${url}.webp`)
-                        })
-                    ]
-                });
+            if (webpClassName !== '' && !webpReg.test(url)) {
+                const newDecl = decl.clone({
+                        value: decl.value.replace(url, url.replace(endReg, '.webp$1'))
+                    }),
+                    newRule = parent.cloneAfter({
+                        selector: `.${newOpts.webpClassName} ${parent.selector}`,
+                        nodes: [
+                        ]
+                    });
+
+                newDecl.parent = newRule;
+
+                newRule.nodes.push(newDecl);
             }
         });
     }
