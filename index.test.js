@@ -109,6 +109,15 @@ describe('test to base64', () => {
 });
 
 describe('test add webp', () => {
+    it('search url', () => {
+        const { test, success } = {
+            test: `a{background-image:url(./test/postcss.jpeg?x=1)}`,
+            success: `a{background-image:url(./test/postcss.jpeg?x=1)}.webp a{background-image:url(./test/postcss.jpeg.webp?x=1)}`
+        };
+
+        return run(test, success, {});
+    });
+
     it('base64', () => {
         const { test, success } = {
             test: `a{background-image:url(./test/postcss.jpeg)}`,
