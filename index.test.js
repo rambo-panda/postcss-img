@@ -135,4 +135,13 @@ describe('test add webp', () => {
 
         return run(test, success, {});
     });
+
+    it('css rules weight', () => {
+        const { test, success } = {
+            test: `a{background:url(./test/postcss.jpeg) no-repeat 100% 100%}`,
+            success: `a{background:url(./test/postcss.jpeg) no-repeat 100% 100%}.webp a{background-image:url(./test/postcss.jpeg.webp)}`
+        };
+
+        return run(test, success, {});
+    });
 });

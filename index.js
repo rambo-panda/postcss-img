@@ -70,7 +70,8 @@ module.exports = postcss.plugin(
 
             if (webpClassName !== '' && !webpReg.test(url)) {
                 const newDecl = decl.clone({
-                        value: decl.value.replace(url, url.replace(endReg, '.webp$1'))
+                        value: `url(${url.replace(endReg, '.webp$1')})`,
+                        prop: "background-image"
                     }),
                     newRule = parent.cloneAfter({
                         selector: `.${newOpts.webpClassName} ${parent.selector}`,
