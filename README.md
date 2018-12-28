@@ -3,14 +3,36 @@
 [PostCSS] Convert to Base64 for redundancy limit size, otherwise use prepared webp pictures to replace.
 
 ```css
-.foo {
+.PNPIfoo {
 	background: url(a.png);
+	color:red
+}
+
+/* No Parse */
+.PNPIfoo {
+	background: url(a.png);
+	color:red
+}
+
+.foo {
+	background: url(a.png?no-postcss-img=0);
+	color:red
+}
+
+/* No Parse */
+.foo {
+	background: url(a.png?no-postcss-img=0);
 	color:red
 }
 ```
 
 ```css
-/* one */
+.foo {
+	background: url(a.png);
+	color:red
+}
+
+/* parse one when img size genater than specified size */
 .foo {
 	background: url(a.png);
 	color:red
@@ -19,7 +41,7 @@
 	background: url(a.png.webp);
 }
 
-/* two */
+/* parse two when img size less than specified size */
 .foo {
 	background: url(base64);
 	color:red
