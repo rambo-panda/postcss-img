@@ -156,6 +156,15 @@ describe('test add webp', () => {
 
     it('css linear', () => {
         const { test, success } = {
+            test: `PNPI_a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`,
+            success: `PNPI_a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`
+        };
+
+        return run(test, success, {});
+    });
+
+    it('css linear', () => {
+        const { test, success } = {
             test: `a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`,
             success: `a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}.webp a{background-image: url(./test/postcss.jpeg.webp),url(./test/postcss.jpeg.webp), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`
         };

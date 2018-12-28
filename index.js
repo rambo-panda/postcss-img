@@ -61,8 +61,13 @@ module.exports = postcss.plugin(
         );
 
         root.walkDecls(/^background(-image)?$/, decl => {
-            const { value } = decl,
-                ress = [],
+            const { value } = decl;
+
+            if (decl.parent.selector.includes('PNPI')) { /* PNPI: Postcss No Parse Image */
+                return;
+            }
+
+            const ress = [],
                 parseVal = value.split(',').map(v => {
                     const [, url ] = urlReg.exec(v) || [];
 
