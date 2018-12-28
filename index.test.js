@@ -109,10 +109,10 @@ describe('test to base64', () => {
 });
 
 describe('test add webp', () => {
-    it('multiple backgrounds url', () => {
+    it('multiple background-image url', () => {
         const { test, success } = {
             test: `a{background-image:url(./test/postcss.jpeg), url(./test/postcss2.jpeg)}`,
-            success: `a{background-image:url(./test/postcss.jpeg), url(./test/postcss2.jpeg)}.webp a{background-image:url(./test/postcss.jpeg.webp), url(./test/postcss2.jpeg.webp)}`
+            success: `a{background-image:url(./test/postcss.jpeg), url(./test/postcss2.jpeg)}.webp a{background-image:url(./test/postcss.jpeg.webp),url(./test/postcss2.jpeg.webp)}`
         };
 
         return run(test, success, {});
@@ -149,6 +149,15 @@ describe('test add webp', () => {
         const { test, success } = {
             test: `a{background-image:url(./test/postcss.jpeg); color:red}`,
             success: `a{background-image:url(./test/postcss.jpeg); color:red}.webp a{background-image:url(./test/postcss.jpeg.webp)}`
+        };
+
+        return run(test, success, {});
+    });
+
+    it('css linear', () => {
+        const { test, success } = {
+            test: `a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`,
+            success: `a{background-image: url(./test/postcss.jpeg), url(./test/postcss.jpeg), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}.webp a{background-image: url(./test/postcss.jpeg.webp),url(./test/postcss.jpeg.webp), linear-gradient(to right, rgba(30, 75, 115, 1), rgba(255, 255, 255, 0));}`
         };
 
         return run(test, success, {});

@@ -19,7 +19,34 @@ const relativeReg = /^(\.{0,2}\/|(?!(http|data:image))\w|[0-9_])/,
     webpReg = /\.webp(\?.+)?$/,
     endReg = /(\?.+)?$/;
 
-const noParse = (url) => url && (noParseReg.test(url) || !relativeReg.test(url) || svgReg.test(url));
+const noParse = (url) => url ? noParseReg.test(url) || !relativeReg.test(url) || svgReg.test(url) : true;
+
+const toSrc = (srcs) => srcs.join(',');
+
+/* eslint-disable consistent-return */
+const parse = (result, newOpts, url) => {
+    const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
+
+    if ($base64Limit > 0) {
+        const imgSrc = resolve(dirname(result.opts.from), url).replace(searchReg, '');
+
+        if (existsSync(imgSrc)) {
+            const { size } = statSync(imgSrc);
+
+            if (size < $base64Limit) {
+                return ['B', toBase64(imgSrc)];
+            }
+        } else {
+            return strict ? new TypeError(`NOT FOUND Image: ${imgSrc}`) : ['B', url];
+        }
+    }
+
+    if (webpClassName !== '' && !webpReg.test(url)) {
+        return ['W', url.replace(endReg, '.webp$1')];
+    }
+};
+/* eslint-enable consistent-return */
+
 
 module.exports = postcss.plugin(
     "postcss-img",
@@ -33,30 +60,6 @@ module.exports = postcss.plugin(
             opts
         );
 
-        /* eslint-disable consistent-return */
-        const parse = (url) => {
-            const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
-
-            if ($base64Limit > 0) {
-                const imgSrc = resolve(dirname(result.opts.from), url).replace(searchReg, '');
-
-                if (existsSync(imgSrc)) {
-                    const { size } = statSync(imgSrc);
-
-                    if (size < $base64Limit) {
-                        return ['B', toBase64(imgSrc)];
-                    }
-                } else {
-                    return strict ? new TypeError(`NOT FOUND Image: ${imgSrc}`) : ['B', url];
-                }
-            }
-
-            if (webpClassName !== '' && !webpReg.test(url)) {
-                return ['W', url.replace(endReg, '.webp$1')];
-            }
-        };
-        /* eslint-enable consistent-return */
-
         root.walkDecls(/^background(-image)?$/, decl => {
             const { value } = decl,
                 ress = [],
@@ -67,7 +70,7 @@ module.exports = postcss.plugin(
                         return v;
                     }
 
-                    const res = parse(url);
+                    const res = parse(result, newOpts, url);
 
                     if (undefined === res) {
                         return v;
@@ -82,19 +85,18 @@ module.exports = postcss.plugin(
                     ress.push(res);
 
                     return v.replace(url, res[1]);
-                }).join(',');
-
+                });
 
             if (ress.length === 0) {
                 return;
             }
 
-            if (ress.length === 1 && ress[0].type === 'B') {
-                decl.value = parseVal;
+            if (ress.length === 1 && ress[0][0] === 'B') {
+                decl.value = toSrc(parseVal);
             } else {
                 const { parent } = decl,
                     newDecl = decl.clone({
-                        value: parseVal,
+                        value: toSrc(parseVal.map(v => (urlReg.exec(v) || [v])[0])),
                         prop: 'background-image'
                     }),
                     newRule = parent.cloneAfter({
