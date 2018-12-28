@@ -2,7 +2,7 @@
 
 const postcss = require("postcss");
 
-const urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
+const urlReg = /url\(['"]?([^'")]+)?['"]?\)/g,
     base64Limit = 1024 * 3,
     { existsSync, statSync, readFileSync } = require("fs"),
     { dirname, resolve, extname } = require("path");
@@ -33,21 +33,8 @@ module.exports = postcss.plugin(
             opts
         );
 
-        root.walkDecls(/^background(-image)?$/, decl => {
-            const { value } = decl,
-                [, url] = urlReg.exec(value) || [];
-
-            if (!url) {
-                result.warn("NOT FOUND: url param");
-
-                return;
-            }
-
-            if (noParse(url)) {
-                return;
-            }
-
-            const { parent } = decl;
+        const parse = (decl, url) => {
+            const { parent, value } = decl;
 
             const { strict, base64Limit: $base64Limit, webpClassName } = newOpts;
 
@@ -82,6 +69,22 @@ module.exports = postcss.plugin(
                 newDecl.parent = newRule;
 
                 newRule.nodes.push(newDecl);
+            }
+        };
+
+        root.walkDecls(/^background(-image)?$/, decl => {
+            const { value } = decl;
+
+            let m;
+
+            while ((m = urlReg.exec(value)) !== null) {
+                const [, url] = m;
+
+                if (noParse(url)) {
+                    return;
+                }
+
+                parse(decl, url);
             }
         });
     }

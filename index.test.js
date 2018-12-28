@@ -109,6 +109,24 @@ describe('test to base64', () => {
 });
 
 describe('test add webp', () => {
+    it('multiple backgrounds url', () => {
+        const { test, success } = {
+            test: `a{background-image:url(./test/postcss.jpeg), url(./test/postcss.jpeg)}`,
+            success: `a{background-image:url(./test/postcss.jpeg), url(./test/postcss.jpeg)}.webp a{background-image:url(./test/postcss.jpeg.webp), url(./test/postcss.jpeg.webp)}`
+        };
+
+        return run(test, success, {});
+    });
+
+    it('normal url', () => {
+        const { test, success } = {
+            test: `a{background-image:url(./test/postcss.jpeg)}`,
+            success: `a{background-image:url(./test/postcss.jpeg)}.webp a{background-image:url(./test/postcss.jpeg.webp)}`
+        };
+
+        return run(test, success, {});
+    });
+
     it('search url', () => {
         const { test, success } = {
             test: `a{background-image:url(./test/postcss.jpeg?x=1)}`,
