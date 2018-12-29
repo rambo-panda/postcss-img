@@ -36,8 +36,8 @@ const parse = (result, newOpts, url) => {
             if (size < $base64Limit) {
                 return ['B', toBase64(imgSrc)];
             }
-        } else {
-            return strict ? new TypeError(`NOT FOUND Image: ${imgSrc}`) : ['B', url];
+        } else if (strict) {
+            return new TypeError(`NOT FOUND Image: ${imgSrc}`);
         }
     }
 
