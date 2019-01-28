@@ -5,21 +5,18 @@ const postcss = require("postcss");
 const urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
     base64Limit = 1024 * 3,
     { existsSync, statSync, readFileSync } = require("fs"),
-    { dirname, resolve, extname } = require("path");
+    { dirname, resolve, extname: pathExtname } = require("path");
+
+const extname = src => pathExtname(src).slice(1);
 
 const toBase64 = imgSrc =>
-    `data:image/${extname(imgSrc).slice(1)};base64,${Buffer.from(
+    `data:image/${extname(imgSrc)};base64,${Buffer.from(
         readFileSync(imgSrc)
     ).toString("base64")}`;
 
-const relativeReg = /^(\.{0,2}\/|(?!(http|data:image))\w|[0-9_])/,
-    svgReg = /\.svg/,
-    noParseReg = /no-postcss-img=0/,
-    searchReg = /\?.+$/,
+const searchReg = /\?.+$/,
     webpReg = /\.webp(\?.+)?$/,
     endReg = /(\?.+)?$/;
-
-const noParse = (url) => url ? noParseReg.test(url) || !relativeReg.test(url) || svgReg.test(url) : true;
 
 const toSrc = (srcs) => srcs.join(',');
 
@@ -48,6 +45,11 @@ const parse = (result, newOpts, url) => {
 /* eslint-enable consistent-return */
 
 
+const ignoreExtReg = /^(?:svg|webp)$/,
+    noParseReg = /no-postcss-img=0/,
+    // relativeReg = /^(\.{1,2}\/|(?!(?:https?:\/\/|data:image))\w)/,
+    absoluteReg = /^(?:https?:\/\/|data:image)/; // https://  or  base64
+
 module.exports = postcss.plugin(
     "postcss-img",
     (opts = {}) => (root, result) => {
@@ -55,7 +57,8 @@ module.exports = postcss.plugin(
             {
                 webpClassName: "webp",
                 base64Limit,
-                strict: true
+                strict: true,
+                ignore: (url) => url ? noParseReg.test(url) || ignoreExtReg.test(extname(url)) || absoluteReg.test(url) : true
             },
             opts
         );
@@ -71,7 +74,7 @@ module.exports = postcss.plugin(
                 parseVal = value.split(',').map(v => {
                     const [, url ] = urlReg.exec(v) || [];
 
-                    if (noParse(url)) {
+                    if (newOpts.ignore(url)) {
                         return v;
                     }
 
