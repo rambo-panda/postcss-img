@@ -87,6 +87,8 @@ module.exports = postcss.plugin(
                         return res;
                     }
 
+                    res.push(url);
+
                     ress.push(res);
 
                     return v.replace(url, res[1]);
@@ -96,24 +98,34 @@ module.exports = postcss.plugin(
                 return;
             }
 
-            if (ress.length === 1 && ress[0][0] === 'B') {
-                decl.value = toSrc(parseVal);
-            } else {
-                const { parent } = decl,
-                    newDecl = decl.clone({
-                        value: toSrc(parseVal.map(v => (urlReg.exec(v) || [v])[0])),
-                        prop: 'background-image'
-                    }),
-                    newRule = parent.cloneAfter({
-                        selector: `.${newOpts.webpClassName} ${parent.selector}`,
-                        nodes: [
-                        ]
-                    });
+            if (ress.some(x => x[0] === 'B')) {
+                ress.forEach((v) => {
+                    if (v[0] === 'B') {
 
-                newDecl.parent = newRule;
+                        decl.value = decl.value.replace(v[2], v[1]);
+                    }
+                });
 
-                newRule.nodes.push(newDecl);
+                if (ress.length === 1) {
+                    return;
+                }
             }
+
+
+            const { parent } = decl,
+                newDecl = decl.clone({
+                    value: toSrc(parseVal.map(v => (urlReg.exec(v) || [v])[0])),
+                    prop: 'background-image'
+                }),
+                newRule = parent.cloneAfter({
+                    selector: `.${newOpts.webpClassName} ${parent.selector}`,
+                    nodes: [
+                    ]
+                });
+
+            newDecl.parent = newRule;
+
+            newRule.nodes.push(newDecl);
         });
     }
 );

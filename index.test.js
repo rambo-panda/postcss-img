@@ -172,6 +172,15 @@ describe('test add webp', () => {
         return run(test, success, {});
     });
 
+    it('css multiple base64 and normal img', () => {
+        const { test, success } = {
+            test: `a{background-image: url(./test/cc9966.png), url(./test/postcss.jpeg);}`,
+            success: `a{background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwAQMAAABtzGvEAAAABGdBTUEAAPQkx/agJQAAAANQTFRFvH5IooWndAAAAA1JREFUGNNjYBgF1AQAAVAAAafi2hYAAAAASUVORK5CYII=), url(./test/postcss.jpeg);}.webp a{background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwAQMAAABtzGvEAAAABGdBTUEAAPQkx/agJQAAAANQTFRFvH5IooWndAAAAA1JREFUGNNjYBgF1AQAAVAAAafi2hYAAAAASUVORK5CYII=),url(./test/postcss.jpeg.webp);}`
+        };
+
+        return run(test, success, {});
+    });
+
     it('css rules weight', () => {
         const { test, success } = {
             test: `a{background:url(./test/postcss.jpeg) no-repeat 100% 100%}`,
