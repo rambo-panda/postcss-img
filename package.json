@@ -19,12 +19,12 @@
   },
   "homepage": "https://github.com/rambo-panda/postcss-img",
   "dependencies": {
-    "postcss": "^6.0.16"
+    "postcss": "7.0.17"
   },
   "devDependencies": {
-    "eslint": "^4.18.2",
-    "eslint-config-postcss": "^2.0.2",
-    "jest": "^22.4.2"
+    "eslint": "^6.3.0",
+    "eslint-config-postcss": "^3.0.7",
+    "jest": "^24.9.0"
   },
   "scripts": {
     "test": "jest && eslint *.js"
