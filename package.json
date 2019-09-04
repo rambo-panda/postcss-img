@@ -23,20 +23,10 @@
   },
   "devDependencies": {
     "eslint": "^6.3.0",
-    "eslint-config-postcss": "^3.0.7",
     "jest": "^24.9.0"
   },
   "scripts": {
     "test": "jest && eslint *.js"
-  },
-  "eslintConfig": {
-    "extends": "eslint-config-postcss/es5",
-    "rules": {
-      "quotes": 0
-    },
-    "env": {
-      "jest": true
-    }
   },
   "jest": {
     "testEnvironment": "node"

@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 
-const postcss = require("postcss");
-
-const urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
+const postcss = require("postcss"),
+    urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
     base64Limit = 1024 * 3,
     { existsSync, statSync, readFileSync } = require("fs"),
     { dirname, resolve, extname: pathExtname } = require("path");
@@ -50,9 +49,7 @@ const ignoreExtReg = /^(?:svg|webp)$/,
     // relativeReg = /^(\.{1,2}\/|(?!(?:https?:\/\/|data:image))\w)/,
     absoluteReg = /^(?:https?:\/\/|data:image)/; // https://  or  base64
 
-module.exports = postcss.plugin(
-    "postcss-img",
-    (opts = {}) => (root, result) => {
+const do_parse = process.env.NO_WEBP === '1' ? () => () => {} : (opts = {}) => (root, result) => {
         const newOpts = Object.assign(
             {
                 webpClassName: "webp",
@@ -130,5 +127,9 @@ module.exports = postcss.plugin(
 
             newRule.nodes.push(newDecl);
         });
-    }
+    };
+
+module.exports = postcss.plugin(
+    "postcss-img",
+    do_parse
 );
