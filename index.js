@@ -44,18 +44,18 @@ const parse = (result, newOpts, url) => {
 /* eslint-enable consistent-return */
 
 
-const ignoreExtReg = /^(?:svg|webp)$/,
-    noParseReg = /no-postcss-img=0/,
+const noParseReg = /no-postcss-img=0/,
     // relativeReg = /^(\.{1,2}\/|(?!(?:https?:\/\/|data:image))\w)/,
     absoluteReg = /^(?:https?:\/\/|data:image)/; // https://  or  base64
 
 const do_parse = process.env.NO_WEBP === '1' ? () => () => {} : (opts = {}) => (root, result) => {
         const newOpts = Object.assign(
             {
+                ignoreExts : ['svg', 'webp'],
                 webpClassName: "webp",
                 base64Limit,
                 strict: true,
-                ignore: (url) => url ? noParseReg.test(url) || ignoreExtReg.test(extname(url)) || absoluteReg.test(url) : true
+                ignore: (url) => url ? noParseReg.test(url) || newOpts.ignoreExts.includes(extname(url)) || absoluteReg.test(url) : true
             },
             opts
         );
