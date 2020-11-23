@@ -2,6 +2,7 @@
 
 const postcss = require("postcss"),
     urlReg = /url\(['"]?([^'"]+)?['"]?\)/,
+    valSplitReg = /(?<=\)),/g,
     base64Limit = 1024 * 3,
     { existsSync, statSync, readFileSync } = require("fs"),
     { dirname, resolve, extname: pathExtname } = require("path");
@@ -16,6 +17,8 @@ const toBase64 = imgSrc =>
 const searchReg = /\?.+$/,
     webpReg = /\.webp(\?.+)?$/,
     endReg = /(\?.+)?$/;
+
+const PNPI = "PNPI"; // PNPI: Postcss No Parse Image
 
 const toSrc = (srcs) => srcs.join(',');
 
@@ -63,12 +66,12 @@ const do_parse = process.env.NO_WEBP === '1' ? () => () => {} : (opts = {}) => (
         root.walkDecls(/^background(-image)?$/, decl => {
             const { value } = decl;
 
-            if ((decl.parent.selector || "PNPI").includes('PNPI')) { /* PNPI: Postcss No Parse Image */
+            if ((decl.parent.selector || PNPI).includes(PNPI)) {
                 return;
             }
 
             const ress = [],
-                parseVal = value.split(',').map(v => {
+                parseVal = value.split(valSplitReg).map(v => {
                     const [, url ] = urlReg.exec(v) || [];
 
                     if (newOpts.ignore(url)) {

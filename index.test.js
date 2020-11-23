@@ -172,6 +172,15 @@ describe('test add webp', () => {
         return run(test, success, {});
     });
 
+    it('css linear before', () => {
+        const { test, success } = {
+            test: `a{background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url("./test/postcss.jpeg");}`,
+            success: `a{background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url("./test/postcss.jpeg");}.webp a{background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)),url("./test/postcss.jpeg.webp");}`,
+        };
+
+        return run(test, success, {});
+    });
+
     it('css multiple base64 and normal img', () => {
         const { test, success } = {
             test: `a{background-image: url(./test/cc9966.png), url(./test/postcss.jpeg);}`,
