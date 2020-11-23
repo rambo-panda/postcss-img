@@ -1,6 +1,6 @@
 {
   "name": "postcss-img",
-  "version": "2.5.0",
+  "version": "4.0.0",
   "description": "PostCSS plugin Convert to Base64 for redundancy limit size, otherwise use prepared webp pictures to replace",
   "keywords": [
     "postcss",
