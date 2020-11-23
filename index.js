@@ -63,7 +63,7 @@ const do_parse = process.env.NO_WEBP === '1' ? () => () => {} : (opts = {}) => (
         root.walkDecls(/^background(-image)?$/, decl => {
             const { value } = decl;
 
-            if (decl.parent.selector.includes('PNPI')) { /* PNPI: Postcss No Parse Image */
+            if ((decl.parent.selector || "PNPI").includes('PNPI')) { /* PNPI: Postcss No Parse Image */
                 return;
             }
 
@@ -118,7 +118,7 @@ const do_parse = process.env.NO_WEBP === '1' ? () => () => {} : (opts = {}) => (
                     prop: 'background-image'
                 }),
                 newRule = parent.cloneAfter({
-                    selector: `.${newOpts.webpClassName} ${parent.selector}`,
+                    selector: parent.selector.split(',').map(v => `.${newOpts.webpClassName} ${v}`).join(','),
                     nodes: [
                     ]
                 });
